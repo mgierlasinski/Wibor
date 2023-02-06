@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:Wibor.ViewModels"
+             xmlns:models="clr-namespace:Wibor.Models"
+             x:DataType="viewModels:MainViewModel"
+             x:Class="Wibor.MainPage">
+
+    <Grid>
+        <CollectionView ItemsSource="{Binding Data}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:StockEntity">
+                    <Grid HorizontalOptions="Fill" ColumnDefinitions="Auto,*">
+                        <Label 
+                            Text="{Binding Date, StringFormat='📅 {0:dd-MM-yyyy}'}" 
+                            Margin="10" />
+                        <Label 
+                            Text="{Binding Value, StringFormat='{0}%'}" 
+                            Margin="10"
+                            Grid.Column="1" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+
+</ContentPage>
