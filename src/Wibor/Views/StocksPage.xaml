@@ -6,6 +6,10 @@
              x:DataType="viewModels:StocksViewModel"
              x:Class="Wibor.Views.StocksPage"
              Title="Stocks">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Refresh" Command="{Binding LoadDataCommand}" />
+    </ContentPage.ToolbarItems>
+
     <Grid>
         <CollectionView 
             ItemsSource="{Binding StockList}" 
@@ -15,7 +19,10 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:StockItem">
                     <Border Margin="5">
-                        <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,*" Margin="10">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10" />
+                        </Border.StrokeShape>
+                        <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,*" Margin="15">
                             <Label 
                                 Text="{Binding DisplayName}" />
                             <Label 

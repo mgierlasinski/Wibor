@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Wibor.Models;
 using Wibor.Services;
 
@@ -8,7 +9,8 @@ namespace Wibor.ViewModels;
 public partial class StocksViewModel
 {
     private readonly IStockMarketService _stockMarketService;
-    private readonly INotifier _notifier;
+    private readonly IDialogService _dialogService;
+    private readonly INavigationService _navigationService;
 
     [ObservableProperty]
     private List<StockItem> _stockList;
@@ -16,12 +18,17 @@ public partial class StocksViewModel
     [ObservableProperty]
     private StockItem _selectedStock;
 
-    public StocksViewModel(IStockMarketService stockMarketService, INotifier notifier)
+    public StocksViewModel(
+        IStockMarketService stockMarketService, 
+        IDialogService dialogService,
+        INavigationService navigationService)
     {
         _stockMarketService = stockMarketService;
-        _notifier = notifier;
+        _dialogService = dialogService;
+        _navigationService = navigationService;
     }
 
+    [RelayCommand]
     public async Task LoadData()
     {
         try
@@ -56,15 +63,12 @@ public partial class StocksViewModel
         }
         catch (Exception e)
         {
-            await _notifier.NotifyException(e);
+            await _dialogService.ShowException(e);
         }
     }
 
     partial void OnSelectedStockChanged(StockItem value)
     {
-        Shell.Current.GoToAsync(AppRouting.ChartRoute, new Dictionary<string, object>
-        {
-            { nameof(StockItem), value }
-        });
+        _navigationService.Navigate(AppRouting.ChartRoute, value);
     }
 }

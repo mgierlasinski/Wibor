@@ -1,13 +1,13 @@
 ﻿namespace Wibor.Services;
 
-public interface INotifier
+public interface IDialogService
 {
-    Task NotifyException(Exception ex);
+    Task ShowException(Exception ex);
 }
 
-public class PopupNotifier : INotifier
+public class DialogService : IDialogService
 {
-    public Task NotifyException(Exception ex)
+    public Task ShowException(Exception ex)
     {
         return Shell.Current.CurrentPage.DisplayAlert("Error", $"Something went wrong: {ex.Message}", "OK");
     }

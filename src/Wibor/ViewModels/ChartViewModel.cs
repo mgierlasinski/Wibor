@@ -11,10 +11,10 @@ namespace Wibor.ViewModels;
 public partial class ChartViewModel
 {
     private readonly IStockMarketService _stockMarketService;
-    private readonly INotifier _notifier;
+    private readonly IDialogService _dialogService;
 
     [ObservableProperty]
-    private List<StockEntity> _data;
+    private List<StockDaily> _data;
 
     [ObservableProperty]
     private ObservableCollection<ChartItem> _chartItems;
@@ -33,10 +33,10 @@ public partial class ChartViewModel
         new ChartRange("1Y", DateTime.Now.AddYears(-1), DateTime.Now)
     };
 
-    public ChartViewModel(IStockMarketService stockMarketService, INotifier notifier)
+    public ChartViewModel(IStockMarketService stockMarketService, IDialogService dialogService)
     {
         _stockMarketService = stockMarketService;
-        _notifier = notifier;
+        _dialogService = dialogService;
         _selectedRange = Ranges[0];
     }
 
@@ -47,13 +47,13 @@ public partial class ChartViewModel
             Data = await _stockMarketService.FindAllBetween(SelectedStock.StockId, SelectedRange.From, SelectedRange.To);
             ChartItems = new ObservableCollection<ChartItem>(Data.Select(x => new ChartItem
             {
-                Label = x.DateLabel,
+                Label = $"{x.Date:dd MMM}",
                 Value = (float)x.Value
             }));
         }
         catch (Exception e)
         {
-            await _notifier.NotifyException(e);
+            await _dialogService.ShowException(e);
         }
     }
 

@@ -1,15 +1,13 @@
 ﻿namespace Wibor.Models;
 
-public class StockEntity
+public class StockDaily
 {
     public long Id { get; set; }
     public string StockId { get; set; }
     public DateTime Date { get; set; }
     public double Value { get; set; }
 
-    public string DateLabel => $"{Date:dd MMM}";
-
-    public static StockEntity Map(StockData data) => new StockEntity
+    public static StockDaily FromData(StockData data) => new StockDaily
     {
         StockId = data.StockId,
         Date = data.Date,

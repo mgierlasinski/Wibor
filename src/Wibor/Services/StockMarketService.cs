@@ -6,8 +6,8 @@ namespace Wibor.Services;
 public interface IStockMarketService
 {
     Stock[] GetStocks();
-    Task<List<StockEntity>> FindAllBetween(string stockId, DateTime dateFrom, DateTime dateTo);
-    Task<List<StockEntity>> TakeLatest(string stockId, DateTime dateFrom, DateTime dateTo, int takeAmount);
+    Task<List<StockDaily>> FindAllBetween(string stockId, DateTime dateFrom, DateTime dateTo);
+    Task<List<StockDaily>> TakeLatest(string stockId, DateTime dateFrom, DateTime dateTo, int takeAmount);
     void ClearCache();
 }
 
@@ -26,13 +26,13 @@ public class StockMarketService : IStockMarketService
 
     public Stock[] GetStocks() => new[]
     {
-        StockRepo.Wibor1M,
-        StockRepo.Wibor3M,
-        StockRepo.Wibor6M,
-        StockRepo.Wibor1Y
+        new Stock("PLOPLN1M", "Wibor 1M"),
+        new Stock("PLOPLN3M", "Wibor 3M"),
+        new Stock("PLOPLN6M", "Wibor 6M"),
+        new Stock("PLOPLN1Y", "Wibor 1Y")
     };
 
-    public async Task<List<StockEntity>> FindAllBetween(string stockId, DateTime dateFrom, DateTime dateTo)
+    public async Task<List<StockDaily>> FindAllBetween(string stockId, DateTime dateFrom, DateTime dateTo)
     {
         dateFrom = dateFrom.Date;
         dateTo = dateTo.Date;
@@ -40,13 +40,13 @@ public class StockMarketService : IStockMarketService
         using var db = _databaseProvider.CreateDatabase();
         await LoadCache(db, stockId, dateFrom, dateTo);
         
-        return db.GetCollection<StockEntity>()
+        return db.GetCollection<StockDaily>()
             .Find(x => x.StockId == stockId && x.Date >= dateFrom && x.Date <= dateTo)
             .OrderBy(x => x.Date)
             .ToList();
     }
 
-    public async Task<List<StockEntity>> TakeLatest(string stockId, DateTime dateFrom, DateTime dateTo, int takeAmount)
+    public async Task<List<StockDaily>> TakeLatest(string stockId, DateTime dateFrom, DateTime dateTo, int takeAmount)
     {
         dateFrom = dateFrom.Date;
         dateTo = dateTo.Date;
@@ -54,7 +54,7 @@ public class StockMarketService : IStockMarketService
         using var db = _databaseProvider.CreateDatabase();
         await LoadCache(db, stockId, dateFrom, dateTo);
 
-        return db.GetCollection<StockEntity>()
+        return db.GetCollection<StockDaily>()
             .Find(x => x.StockId == stockId && x.Date >= dateFrom && x.Date <= dateTo)
             .OrderBy(x => x.Date)
             .TakeLast(takeAmount)
@@ -69,7 +69,7 @@ public class StockMarketService : IStockMarketService
         if (update == null)
         {
             var data = await _stockMarketClient.GetData(stockId, dateFrom, dateTo);
-            db.GetCollection<StockEntity>().InsertBulk(data.Select(StockEntity.Map));
+            db.GetCollection<StockDaily>().InsertBulk(data.Select(StockDaily.FromData));
             updateCol.Insert(new StockUpdate
             {
                 StockId = stockId,
@@ -84,14 +84,14 @@ public class StockMarketService : IStockMarketService
             if (dateFrom < update.RangeFrom)
             {
                 var data = await _stockMarketClient.GetData(stockId, dateFrom, update.RangeFrom.AddDays(-1));
-                db.GetCollection<StockEntity>().InsertBulk(data.Select(StockEntity.Map));
+                db.GetCollection<StockDaily>().InsertBulk(data.Select(StockDaily.FromData));
                 update.RangeFrom = dateFrom;
                 isUpdateDirty = true;
             }
             if (dateTo > update.RangeTo)
             {
                 var data = await _stockMarketClient.GetData(stockId, update.RangeTo.AddDays(1), dateTo);
-                db.GetCollection<StockEntity>().InsertBulk(data.Select(StockEntity.Map));
+                db.GetCollection<StockDaily>().InsertBulk(data.Select(StockDaily.FromData));
                 update.RangeTo = dateTo;
                 isUpdateDirty = true;
             }
@@ -107,7 +107,7 @@ public class StockMarketService : IStockMarketService
     {
         using var db = _databaseProvider.CreateDatabase();
 
-        db.DropCollection(nameof(StockEntity));
+        db.DropCollection(nameof(StockDaily));
         db.DropCollection(nameof(StockUpdate));
     }
 }
