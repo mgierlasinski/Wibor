@@ -13,6 +13,24 @@
             <charts:SfCartesianChart.Resources>
                 <charts:ChartAxisLabelStyle x:Key="XAxisLableStyle" TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" LabelFormat="dd MMM"/>
                 <charts:ChartAxisLabelStyle x:Key="YAxisLableStyle" TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
+                <DataTemplate x:Key="TooltipTemplate">
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto">
+                        <Label Text="{Binding Item.Date, StringFormat='{0:D}'}"
+                               TextColor="Pink"
+                               FontSize="12"
+                               Grid.ColumnSpan="2"/>
+                        <Label Text="Kurs:"
+                               TextColor="Pink"
+                               FontSize="12"
+                               Grid.Row="1"/>
+                        <Label Text="{Binding Item.Value, StringFormat='{0:0.00}%'}"
+                               TextColor="Pink"
+                               FontAttributes="Bold"
+                               FontSize="12"
+                               Grid.Row="1"
+                               Grid.Column="1"/>
+                    </Grid>
+                </DataTemplate>
             </charts:SfCartesianChart.Resources>
             <charts:SfCartesianChart.Title>
                 <Label Text="{Binding SelectedStock.DisplayName}" HorizontalTextAlignment="Center" FontSize="18" Margin="0,0,0,10" />
@@ -35,7 +53,9 @@
                                XBindingPath="Date"
                                YBindingPath="Value"
                                EnableTooltip="True"
-                               ShowMarkers="True"/>
+                               TooltipTemplate="{StaticResource TooltipTemplate}"
+                               ShowMarkers="True"
+                               EnableAnimation="True" />
         </charts:SfCartesianChart>
 
         <!--<controls:LineChart

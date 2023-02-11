@@ -30,13 +30,14 @@
                                 Grid.Column="1" 
                                 HorizontalOptions="End" />
                             <Label 
-                                Text="{Binding ValueCurrent, StringFormat='{0}%'}" 
+                                Text="{Binding ValueCurrent, StringFormat='{0:0.00}%'}" 
                                 FontSize="22"
                                 FontAttributes="Bold"
                                 Margin="0,5,0,0"
                                 Grid.Row="2" />
                             <Label 
                                 Text="{Binding ValueChangeDisplay}" 
+                                TextColor="{Binding ValueChangeColor}"
                                 Grid.Row="2" 
                                 Grid.Column="1" 
                                 HorizontalOptions="End"
