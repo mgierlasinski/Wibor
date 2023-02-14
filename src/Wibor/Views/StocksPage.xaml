@@ -9,19 +9,16 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Refresh" Command="{Binding LoadDataCommand}" />
     </ContentPage.ToolbarItems>
-
-    <Grid>
+   
+    <Grid x:Name="MainGrid">
         <CollectionView 
+            x:Name="StocksCollection"
             ItemsSource="{Binding StockList}" 
             SelectedItem="{Binding SelectedStock}"
-            ItemsLayout="VerticalGrid, 2"
             SelectionMode="Single">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:StockItem">
-                    <Border Margin="5">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="10" />
-                        </Border.StrokeShape>
+                    <Border Style="{StaticResource Section}" Margin="10,8">
                         <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,*" Margin="15">
                             <Label 
                                 Text="{Binding DisplayName}" />

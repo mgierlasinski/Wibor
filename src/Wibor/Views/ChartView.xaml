@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:charts="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
+             xmlns:models="clr-namespace:Wibor.Models"
+             x:Class="Wibor.Views.ChartView">
+    <Grid RowDefinitions="Auto,50,*">
+
+        <Border StrokeThickness="0" Margin="10" HorizontalOptions="Center">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Offset="0" Color="{StaticResource Primary}" />
+                    <GradientStop Offset="0" Color="{StaticResource Tertiary}" />
+                </LinearGradientBrush>
+            </Border.Background>
+
+            <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,*" Margin="15">
+                <Label 
+                    Text="{Binding SelectedStock.DisplayName}" />
+                <Label 
+                    Text="{Binding SelectedStock.Date, StringFormat='{0:ddd, dd MMMM}'}"
+                    FontSize="12"
+                    Grid.Column="1" 
+                    HorizontalOptions="End" />
+                <Label 
+                    Text="{Binding SelectedStock.ValueCurrent, StringFormat='{0:0.00}%'}" 
+                    FontSize="22"
+                    FontAttributes="Bold"
+                    Margin="0,5,0,0"
+                    Grid.Row="2" />
+                <Label 
+                    Text="{Binding SelectedStock.ValueChangeDisplay}" 
+                    TextColor="{Binding SelectedStock.ValueChangeColor}"
+                    Grid.Row="2" 
+                    Grid.Column="1" 
+                    HorizontalOptions="End"
+                    VerticalOptions="End"/>
+            </Grid>
+        </Border>
+
+        <HorizontalStackLayout 
+            BindableLayout.ItemsSource="{Binding Ranges}" 
+            RadioButtonGroup.GroupName="ChartRange"
+            RadioButtonGroup.SelectedValue="{Binding SelectedRange}"
+            HorizontalOptions="Center"
+            Margin="20,0" 
+            Grid.Row="1">
+            <BindableLayout.ItemTemplate>
+                <DataTemplate x:DataType="models:ChartRange">
+                    <RadioButton Content="{Binding Name}" Value="{Binding}">
+                        <RadioButton.ControlTemplate>
+                            <ControlTemplate>
+                                <Grid RowDefinitions="30,4">
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CheckedStates">
+                                            <VisualState x:Name="Checked">
+                                                <VisualState.Setters>
+                                                    <Setter
+                                                        TargetName="TextLabel"
+                                                        Property="Label.TextColor"
+                                                        Value="{StaticResource Primary}"/>
+                                                    <Setter
+                                                        TargetName="Indicator"
+                                                        Property="BoxView.Color"
+                                                        Value="{StaticResource Primary}"/>
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="Unchecked">
+                                                <VisualState.Setters>
+                                                    <Setter
+                                                        TargetName="TextLabel"
+                                                        Property="Label.TextColor"
+                                                        Value="White"/>
+                                                    <Setter
+                                                        TargetName="Indicator"
+                                                        Property="BoxView.Color"
+                                                        Value="Transparent"/>
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                    <Label x:Name="TextLabel" Text="{TemplateBinding Content}" HorizontalTextAlignment="Center" />
+                                    <BoxView x:Name="Indicator" Grid.Row="1" Color="Transparent"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </RadioButton.ControlTemplate>
+                    </RadioButton>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </HorizontalStackLayout>
+
+        <charts:SfCartesianChart Margin="10" Grid.Row="2">
+            <charts:SfCartesianChart.Resources>
+                <charts:ChartAxisLabelStyle x:Key="XAxisLableStyle" TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" LabelFormat="dd MMM"/>
+                <charts:ChartAxisLabelStyle x:Key="YAxisLableStyle" TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
+                <DataTemplate x:Key="TooltipTemplate">
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto">
+                        <Label Text="{Binding Item.Date, StringFormat='{0:D}'}"
+                               TextColor="Pink"
+                               FontSize="12"
+                               Grid.ColumnSpan="2"/>
+                        <Label Text="Kurs:"
+                               TextColor="Pink"
+                               FontSize="12"
+                               Grid.Row="1"/>
+                        <Label Text="{Binding Item.Value, StringFormat='{0:0.00}%'}"
+                               TextColor="Pink"
+                               FontAttributes="Bold"
+                               FontSize="12"
+                               Grid.Row="1"
+                               Grid.Column="1"/>
+                    </Grid>
+                </DataTemplate>
+            </charts:SfCartesianChart.Resources>
+            <charts:SfCartesianChart.XAxes>
+                <charts:DateTimeAxis LabelStyle="{StaticResource XAxisLableStyle}">
+                    <charts:DateTimeAxis.Title>
+                        <charts:ChartAxisTitle Text="Day" TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
+                    </charts:DateTimeAxis.Title>
+                </charts:DateTimeAxis>
+            </charts:SfCartesianChart.XAxes>
+            <charts:SfCartesianChart.YAxes>
+                <charts:NumericalAxis LabelStyle="{StaticResource YAxisLableStyle}">
+                    <charts:NumericalAxis.Title>
+                        <charts:ChartAxisTitle Text="Value (%)" TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
+                    </charts:NumericalAxis.Title>
+                </charts:NumericalAxis>
+            </charts:SfCartesianChart.YAxes>
+            <charts:LineSeries ItemsSource="{Binding Data}" 
+                               XBindingPath="Date"
+                               YBindingPath="Value"
+                               EnableTooltip="True"
+                               TooltipTemplate="{StaticResource TooltipTemplate}"
+                               ShowMarkers="True"/>
+        </charts:SfCartesianChart>
+
+    </Grid>
+</ContentView>

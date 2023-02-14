@@ -5,6 +5,11 @@ using Wibor.Services;
 
 namespace Wibor.ViewModels;
 
+public enum StocksVisualState
+{
+    SubPage, SideBySide
+}
+
 [ObservableObject]
 public partial class StocksViewModel
 {
@@ -12,20 +17,26 @@ public partial class StocksViewModel
     private readonly IDialogService _dialogService;
     private readonly INavigationService _navigationService;
 
+    public ChartViewModel Chart { get; set; }
+
     [ObservableProperty]
     private List<StockItem> _stockList;
 
     [ObservableProperty]
     private StockItem _selectedStock;
 
+    public StocksVisualState VisualState { get; set; }
+
     public StocksViewModel(
         IStockMarketService stockMarketService, 
         IDialogService dialogService,
-        INavigationService navigationService)
+        INavigationService navigationService,
+        ChartViewModel chart)
     {
         _stockMarketService = stockMarketService;
         _dialogService = dialogService;
         _navigationService = navigationService;
+        Chart = chart;
     }
 
     [RelayCommand]
@@ -60,6 +71,7 @@ public partial class StocksViewModel
             }
 
             StockList = list;
+            SelectDefaultItem();
         }
         catch (Exception e)
         {
@@ -67,8 +79,20 @@ public partial class StocksViewModel
         }
     }
 
+    public void SelectDefaultItem()
+    {
+        SelectedStock = VisualState == StocksVisualState.SideBySide ? StockList?.FirstOrDefault() : null;
+    }
+
     partial void OnSelectedStockChanged(StockItem value)
     {
-        _navigationService.Navigate(AppRouting.ChartRoute, value);
+        if (VisualState == StocksVisualState.SideBySide)
+        {
+            Chart.SelectedStock = value;
+        }
+        else if (value != null)
+        {
+            _navigationService.Navigate(AppRouting.ChartRoute, value);
+        }
     }
 }

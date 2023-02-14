@@ -27,6 +27,7 @@ public static class MauiProgram
         builder.Services.AddTransient<SettingsViewModel>();
 
         builder.Services.AddSingleton<IDatabaseProvider, DatabaseProvider>();
+        builder.Services.AddSingleton<ICacheService, CacheService>();
         builder.Services.AddSingleton<INavigationService, NavigationService>();
         builder.Services.AddSingleton<IDialogService, DialogService>();
         builder.Services.AddSingleton<IStockMarketClient, StockMarketClient>();

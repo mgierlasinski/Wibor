@@ -42,6 +42,9 @@ public partial class ChartViewModel
 
     public async Task LoadData()
     {
+        if (SelectedStock == null)
+            return;
+
         try
         {
             Data = await _stockMarketService.FindAllBetween(SelectedStock.StockId, SelectedRange.From, SelectedRange.To);
@@ -55,6 +58,11 @@ public partial class ChartViewModel
         {
             await _dialogService.ShowException(e);
         }
+    }
+
+    partial void OnSelectedStockChanged(StockItem value)
+    {
+        LoadData();
     }
 
     partial void OnSelectedRangeChanged(ChartRange value)

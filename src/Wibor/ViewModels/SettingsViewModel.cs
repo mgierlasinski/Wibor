@@ -7,16 +7,30 @@ namespace Wibor.ViewModels;
 [ObservableObject]
 public partial class SettingsViewModel
 {
-    private readonly IStockMarketService _stockMarketService;
+    private readonly ICacheService _cacheService;
 
-    public SettingsViewModel(IStockMarketService stockMarketService)
+    [ObservableProperty]
+    private string _lastUpdated;
+
+    [ObservableProperty]
+    private int _totalRows;
+
+    public SettingsViewModel(ICacheService cacheService)
     {
-        _stockMarketService = stockMarketService;
+        _cacheService = cacheService;
+    }
+
+    public void LoadInfo()
+    {
+        var info = _cacheService.GetCacheInfo();
+        LastUpdated = info.LastUpdated?.ToString("ddd, dd MMMM, hh:mm") ?? "Never updated";
+        TotalRows = info.TotalRows;
     }
 
     [RelayCommand]
     private void ClearCache()
     {
-        _stockMarketService.ClearCache();
+        _cacheService.ClearCache();
+        LoadInfo();
     }
 }

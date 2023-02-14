@@ -5,11 +5,27 @@
              x:DataType="viewModels:SettingsViewModel"
              x:Class="Wibor.Views.SettingsPage"
              Title="Settings">
-    <Grid>
-        <Button 
-            Text="Clear Cache"
-            Command="{Binding ClearCacheCommand}"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </Grid>
+    <VerticalStackLayout Margin="10">
+        <Border Style="{StaticResource Section}">
+            <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto" Margin="15">
+                <Label 
+                    Text="Local Data" 
+                    FontSize="20"
+                    Margin="0,0,0,5"/>
+                <Label 
+                    Text="{Binding LastUpdated, StringFormat='Last updated: {0}'}" 
+                    Grid.Row="1" />
+                <Label 
+                    Text="{Binding TotalRows, StringFormat='Total rows: {0}'}" 
+                    Grid.Row="2" />
+                <Button 
+                    Text="Clear Data"
+                    Command="{Binding ClearCacheCommand}"
+                    VerticalOptions="Center" 
+                    Grid.Column="1"
+                    Grid.Row="1" 
+                    Grid.RowSpan="2" />
+            </Grid>
+        </Border>
+    </VerticalStackLayout>
 </ContentPage>

@@ -10,13 +10,13 @@ public partial class ChartPage : ContentPage
     {
         InitializeComponent();
 
-        _viewModel = viewModel;
+        //_viewModel = viewModel;
         BindingContext = viewModel;
     }
 
-    protected override void OnNavigatedTo(NavigatedToEventArgs args)
-    {
-        base.OnNavigatedTo(args);
-        _viewModel.LoadData();
-    }
+    //protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    //{
+    //    base.OnNavigatedTo(args);
+    //    _viewModel.LoadData();
+    //}
 }
