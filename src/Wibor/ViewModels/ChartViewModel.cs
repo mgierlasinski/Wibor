@@ -1,6 +1,4 @@
-﻿using AlohaKit.Models;
-using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.ObjectModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Wibor.Models;
 using Wibor.Services;
 
@@ -17,7 +15,13 @@ public partial class ChartViewModel
     private List<StockDaily> _data;
 
     [ObservableProperty]
-    private ObservableCollection<ChartItem> _chartItems;
+    private double _minValue;
+
+    [ObservableProperty]
+    private double _maxValue;
+    
+    [ObservableProperty]
+    private LinearGradientBrush _fillBrush;
 
     [ObservableProperty]
     private StockItem _selectedStock;
@@ -48,16 +52,31 @@ public partial class ChartViewModel
         try
         {
             Data = await _stockMarketService.FindAllBetween(SelectedStock.StockId, SelectedRange.From, SelectedRange.To);
-            ChartItems = new ObservableCollection<ChartItem>(Data.Select(x => new ChartItem
-            {
-                Label = $"{x.Date:dd MMM}",
-                Value = (float)x.Value
-            }));
+            MinValue = Data.Min(x => x.Value);
+            MaxValue = Data.Max(x => x.Value);
+
+            SetupFill();
         }
         catch (Exception e)
         {
             await _dialogService.ShowException(e);
         }
+    }
+
+    private void SetupFill()
+    {
+        var baseColor = Application.Current.GetResource<Color>("Primary");
+        var color1 = baseColor.MakeTransparent(0.8f);
+        var color2 = baseColor.MakeTransparent(0.2f);
+        var gradientEnd = 1 - (float)(MinValue / MaxValue);
+        
+        FillBrush = new LinearGradientBrush(new GradientStopCollection
+        {
+            new(color1, 0.0f),
+            new(color2, gradientEnd)
+        },
+        startPoint: new Point(0.5, 0),
+        endPoint: new Point(0.5, 1));
     }
 
     partial void OnSelectedStockChanged(StockItem value)

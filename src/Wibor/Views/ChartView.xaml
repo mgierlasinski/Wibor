@@ -9,8 +9,8 @@
         <Border StrokeThickness="0" Margin="10" HorizontalOptions="Center">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Offset="0" Color="{StaticResource Primary}" />
-                    <GradientStop Offset="0" Color="{StaticResource Tertiary}" />
+                    <GradientStop Offset="0.0" Color="{StaticResource Primary}" />
+                    <GradientStop Offset="1.0" Color="{StaticResource Tertiary}" />
                 </LinearGradientBrush>
             </Border.Background>
 
@@ -120,18 +120,31 @@
                 </charts:DateTimeAxis>
             </charts:SfCartesianChart.XAxes>
             <charts:SfCartesianChart.YAxes>
-                <charts:NumericalAxis LabelStyle="{StaticResource YAxisLableStyle}">
+                <charts:NumericalAxis LabelStyle="{StaticResource YAxisLableStyle}" 
+                                      Minimum="{Binding MinValue}"
+                                      Maximum="{Binding MaxValue}">
                     <charts:NumericalAxis.Title>
                         <charts:ChartAxisTitle Text="Value (%)" TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
                     </charts:NumericalAxis.Title>
                 </charts:NumericalAxis>
             </charts:SfCartesianChart.YAxes>
-            <charts:LineSeries ItemsSource="{Binding Data}" 
+            <charts:AreaSeries ItemsSource="{Binding Data}" 
                                XBindingPath="Date"
                                YBindingPath="Value"
                                EnableTooltip="True"
                                TooltipTemplate="{StaticResource TooltipTemplate}"
-                               ShowMarkers="True"/>
+                               ShowMarkers="True"
+                               EnableAnimation="True"
+                               Fill="{Binding FillBrush}"
+                               Stroke="{StaticResource Secondary}"
+                               StrokeWidth="2">
+                <!--<charts:AreaSeries.Fill>
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                        <GradientStop Offset="0.0" Color="{StaticResource Primary}" />
+                        <GradientStop Offset="1.0" Color="Yellow" />
+                    </LinearGradientBrush>
+                </charts:AreaSeries.Fill>-->
+            </charts:AreaSeries>
         </charts:SfCartesianChart>
 
     </Grid>

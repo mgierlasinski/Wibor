@@ -28,7 +28,11 @@ public class StockMarketService : IStockMarketService
         new Stock("PLOPLN1M", "Wibor 1M"),
         new Stock("PLOPLN3M", "Wibor 3M"),
         new Stock("PLOPLN6M", "Wibor 6M"),
-        new Stock("PLOPLN1Y", "Wibor 1Y")
+        new Stock("PLOPLN1Y", "Wibor 1Y"),
+        new Stock("PLOPLNON", "Wibor Overnight"),
+        new Stock("PLOPLNTN", "Wibor TN"),
+        new Stock("PLOPLN1W", "Wibor 1W"),
+        new Stock("PLOPLN2W", "Wibor 2W")
     };
 
     public async Task<List<StockDaily>> FindAllBetween(string stockId, DateTime dateFrom, DateTime dateTo)
