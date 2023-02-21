@@ -11,6 +11,11 @@
     </ContentPage.ToolbarItems>
    
     <Grid x:Name="MainGrid">
+        <ProgressBar 
+            IsVisible="{Binding IsProgressActive}"
+            Progress="{Binding ProgressValue}" 
+            HeightRequest="10" 
+            VerticalOptions="Start" />
         <CollectionView 
             x:Name="StocksCollection"
             ItemsSource="{Binding StockList}" 
@@ -19,26 +24,32 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:StockItem">
                     <Border Style="{StaticResource Section}" Margin="10,8">
-                        <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,*" Margin="15">
+                        <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,*">
                             <Label 
-                                Text="{Binding DisplayName}" />
+                                Text="{Binding DisplayName}" Margin="15,15,0,0" />
                             <Label 
                                 Text="{Binding Date, StringFormat='📅 {0:dd-MM-yyyy}'}" 
                                 Grid.Column="1" 
+                                Margin="0,15,15,0"
                                 HorizontalOptions="End" />
                             <Label 
                                 Text="{Binding ValueCurrent, StringFormat='{0:0.00}%'}" 
                                 FontSize="22"
                                 FontAttributes="Bold"
-                                Margin="0,5,0,0"
+                                Margin="15,5,0,15"
                                 Grid.Row="2" />
                             <Label 
                                 Text="{Binding ValueChangeDisplay}" 
                                 TextColor="{Binding ValueChangeColor}"
                                 Grid.Row="2" 
                                 Grid.Column="1" 
+                                Margin="0,0,15,15"
                                 HorizontalOptions="End"
                                 VerticalOptions="End"/>
+                            <Grid IsVisible="{Binding IsLoading}" RowSpan="2" ColumnSpan="2">
+                                <BoxView Color="#aa000000" />
+                                <ActivityIndicator IsRunning="{Binding IsLoading}" />
+                            </Grid>
                         </Grid>
                     </Border>
                 </DataTemplate>

@@ -147,5 +147,10 @@
             </charts:AreaSeries>
         </charts:SfCartesianChart>
 
+        <Grid IsVisible="{Binding IsLoading}" RowSpan="3">
+            <BoxView Color="#aa000000" />
+            <ActivityIndicator IsRunning="{Binding IsLoading}" />
+        </Grid>
+
     </Grid>
 </ContentView>

@@ -1,12 +1,30 @@
-﻿namespace Wibor.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-public class StockItem
+namespace Wibor.Models;
+
+[ObservableObject]
+public partial class StockItem
 {
+    [ObservableProperty]
+    private DateTime _date;
+
+    [ObservableProperty]
+    private double _valueCurrent;
+
+    [ObservableProperty]
+    private double _valueChange;
+
+    [ObservableProperty]
+    private bool _isLoading;
+
     public string StockId { get; set; }
     public string DisplayName { get; set; }
-    public DateTime Date { get; set; }
-    public double ValueCurrent { get; set; }
-    public double ValueChange { get; set; }
+    
+    partial void OnValueChangeChanged(double value)
+    {
+        OnPropertyChanged(nameof(ValueChangeDisplay));
+        OnPropertyChanged(nameof(ValueChangeColor));
+    }
 
     public string ValueChangeDisplay => ValueChange switch
     {

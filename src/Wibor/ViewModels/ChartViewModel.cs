@@ -21,6 +21,9 @@ public partial class ChartViewModel
     private double _maxValue;
     
     [ObservableProperty]
+    private bool _isLoading;
+
+    [ObservableProperty]
     private LinearGradientBrush _fillBrush;
 
     [ObservableProperty]
@@ -51,6 +54,7 @@ public partial class ChartViewModel
 
         try
         {
+            IsLoading = true;
             Data = await _stockMarketService.FindAllBetween(SelectedStock.StockId, SelectedRange.From, SelectedRange.To);
             MinValue = Data.Min(x => x.Value);
             MaxValue = Data.Max(x => x.Value);
@@ -60,6 +64,10 @@ public partial class ChartViewModel
         catch (Exception e)
         {
             await _dialogService.ShowException(e);
+        }
+        finally
+        {
+            IsLoading = false;
         }
     }
 

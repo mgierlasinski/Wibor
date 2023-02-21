@@ -8,6 +8,7 @@ public interface IStockMarketService
     Stock[] GetStocks();
     Task<List<StockDaily>> FindAllBetween(string stockId, DateTime dateFrom, DateTime dateTo);
     Task<List<StockDaily>> TakeLatest(string stockId, DateTime dateFrom, DateTime dateTo, int takeAmount);
+    Task<List<StockDaily>> TakeLatest(LiteDatabase db, string stockId, DateTime dateFrom, DateTime dateTo, int takeAmount);
 }
 
 public class StockMarketService : IStockMarketService
@@ -49,12 +50,17 @@ public class StockMarketService : IStockMarketService
             .ToList();
     }
 
-    public async Task<List<StockDaily>> TakeLatest(string stockId, DateTime dateFrom, DateTime dateTo, int takeAmount)
+    public Task<List<StockDaily>> TakeLatest(string stockId, DateTime dateFrom, DateTime dateTo, int takeAmount)
+    {
+        using var db = _databaseProvider.CreateDatabase();
+        return TakeLatest(db, stockId, dateFrom, dateTo, takeAmount);
+    }
+
+    public async Task<List<StockDaily>> TakeLatest(LiteDatabase db, string stockId, DateTime dateFrom, DateTime dateTo, int takeAmount)
     {
         dateFrom = dateFrom.Date;
         dateTo = dateTo.Date;
 
-        using var db = _databaseProvider.CreateDatabase();
         await _cacheService.LoadCache(db, stockId, dateFrom, dateTo);
 
         return db.GetCollection<StockDaily>()
